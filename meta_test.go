@@ -8,12 +8,13 @@ import (
 	"github.com/yuin/goldmark/parser"
 )
 
+var markdown = goldmark.New(
+	goldmark.WithExtensions(
+		New(),
+	),
+)
+
 func TestMeta(t *testing.T) {
-	markdown := goldmark.New(
-		goldmark.WithExtensions(
-			Meta,
-		),
-	)
 	source := `---
 title: goldmark-meta
 ignored:
@@ -42,11 +43,6 @@ ignored:
 }
 
 func TestNoMeta(t *testing.T) {
-	markdown := goldmark.New(
-		goldmark.WithExtensions(
-			Meta,
-		),
-	)
 	source := `# Hello goldmark-meta`
 
 	var buf bytes.Buffer
@@ -69,11 +65,6 @@ func TestNoMeta(t *testing.T) {
 }
 
 func TestEmptyMeta(t *testing.T) {
-	markdown := goldmark.New(
-		goldmark.WithExtensions(
-			Meta,
-		),
-	)
 	source := `---
 ---
 # Hello goldmark-meta`
@@ -98,11 +89,6 @@ func TestEmptyMeta(t *testing.T) {
 }
 
 func TestMetaError(t *testing.T) {
-	markdown := goldmark.New(
-		goldmark.WithExtensions(
-			New(),
-		),
-	)
 	source := `---
 bad:
   - : {
@@ -120,5 +106,22 @@ bad:
 	out := struct{}{}
 	if err := Unmarshal(context, &out); err == nil {
 		t.Error("Should throw unmarshal error")
+	}
+}
+
+func TestInvalidMetaBuffer(t *testing.T) {
+	source := `# Hello goldmark-meta`
+
+	var buf bytes.Buffer
+	context := parser.NewContext()
+	context.Set(contextKey, 0) // Not the expected bytes.Buffer
+	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(parser.NewContext())); err != nil {
+		panic(err)
+	}
+	out := struct {
+		Title string
+	}{}
+	if err := Unmarshal(context, &out); err == nil {
+		t.Error("Should throw unavailable YAML buffer error")
 	}
 }
