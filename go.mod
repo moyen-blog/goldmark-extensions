@@ -1,4 +1,4 @@
-module github.com/yuin/goldmark-meta
+module github.com/moyen-blog/goldmark-meta
 
 go 1.15
 

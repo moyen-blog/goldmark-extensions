@@ -1,4 +1,4 @@
-// package meta is a extension for the goldmark(http://github.com/yuin/goldmark).
+// Package meta is a extension for the goldmark(http://github.com/yuin/goldmark).
 //
 // This extension parses YAML metadata blocks and store metadata to a
 // parser.Context.
