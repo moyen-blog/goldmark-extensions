@@ -35,8 +35,8 @@ Example:
 title: goldmark-meta
 summary: Add YAML metadata to the document
 tags:
-    - markdown
-    - goldmark
+  - markdown
+  - goldmark
 ---
 
 # Heading 1
@@ -64,8 +64,8 @@ func main() {
 title: goldmark-meta
 summary: Add YAML metadata to the document
 tags:
-    - markdown
-    - goldmark
+  - markdown
+  - goldmark
 ---
 
 # Hello goldmark-meta
@@ -78,11 +78,11 @@ tags:
     }
     // Note: Struct fields must be public in order to correctly populate the data
     out := struct {
-		Title string
-	}{}
-	if err := meta.Unmarshal(context, &out); err != nil {
-		panic(err)
-	}
+        Title string
+    }{}
+    if err := meta.Unmarshal(context, &out); err != nil {
+        panic(err)
+    }
     fmt.Print(out.Title)
 }
 ```
