@@ -1,49 +1,43 @@
-# goldmark-meta
+# Goldmark Meta
 
-goldmark-meta is an extension for the [goldmark](http://github.com/yuin/goldmark) that allows you to define document metadata in YAML format.
+Goldmark Meta is an extension for [Goldmark](http://github.com/yuin/goldmark) that allows you to define document metadata in YAML format. Additionally, Goldmark Meta optionally generates a snipped of the markdown documents text.
 
-## Changes
+Originally forked from [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta), this project has undergone large, breaking changes and now stands on its own.
 
-There are significant changes from the upstream [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta). The extension is largely simplified and has undergone the following changes.
-- Rendering a table is no longer supported
-- YAML metadata is accessed via a typical `Unmarshal` interface
-- YAML metadata must use a separator line of minimum three `-` characters
+## Overview
 
-## Usage
+Goldmark Meta provides the following functions to extend Goldmark.
 
-### Installation
+1. Scrape document metadata from [YAML front matter](https://jekyllrb.com/docs/front-matter/) defined at the top of a markdown document.
+2. Aggregate a configurable-length snippet of the markdown documents text content.
+
+## Installation
 
 ```
 go get github.com/moyen-blog/goldmark-meta
 ```
 
-### Markdown syntax
+## YAML Front Matter
 
-YAML metadata block is a leaf block that can not have any markdown element as a child.
+### Markdown Syntax
 
-YAML metadata must start with a **YAML metadata separator**. This separator must be at first line of the document.
+YAML front matter is metadata defined at the top of a markdown document. It can not contain markdown itself. The front matter block must be surrounded by lines containing the YAML metadata separator `---`. If metadata is defined, the separator must be the first line of the document. The YAML metadata block must end with a YAML metadata separator.
 
-A **YAML metadata separator** is a line that only `-` is repeated three or more times.
-
-YAML metadata must end with a **YAML metadata separator**.
-
-You can define objects as a 1st level item. At deeper level, you can define any kind of YAML element.
+All valid YAML is supported. The underlying parsing of YAML is done by [go-yaml/yaml](https://github.com/go-yaml/yaml).
 
 Example:
 
 ```
 ---
 title: goldmark-meta
-summary: Add YAML metadata to the document
 tags:
-  - markdown
-  - goldmark
+  - one
 ---
 
 # Heading 1
 ```
 
-### Access the metadata
+### Accessing Metadata
 
 ```go
 import (
@@ -65,8 +59,7 @@ func main() {
 title: goldmark-meta
 summary: Add YAML metadata to the document
 tags:
-  - markdown
-  - goldmark
+  - one
 ---
 
 # Hello goldmark-meta
@@ -80,10 +73,35 @@ tags:
     // Note: Struct fields must be public in order to correctly populate the data
     out := struct {
         Title string
+        Tags []string
     }{}
     if err := meta.Unmarshal(context, &out); err != nil {
         panic(err)
     }
-    fmt.Print(out.Title)
+    fmt.Println(out.Title, out.Tags)
 }
 ```
+
+## Markdown Text Snippet
+
+### Markdown Syntax
+
+There is no specific syntax needed for generating a text snippet. The snippet is made up of text from paragraphs within the markdown document only.
+
+Example:
+
+Example:
+
+```
+# Heading 1
+
+Here's some text in a paragraph.
+
+# Heading 2
+
+More text here.
+```
+
+### Accessing Text Snippet
+
+TODO

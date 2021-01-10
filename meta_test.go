@@ -17,9 +17,9 @@ var markdown = goldmark.New(
 func TestMeta(t *testing.T) {
 	source := `---
 title: goldmark-meta
-ignored:
-  a: 2
-  b: [3, 4]
+tags:
+  - one
+ignored: hi
 ---
 # Hello goldmark-meta`
 
@@ -30,15 +30,22 @@ ignored:
 	}
 	out := struct {
 		Title string
+		Tags  []string
 	}{}
 	if err := Unmarshal(context, &out); err != nil {
-		t.Error("YAML unmarshal failed")
+		t.Errorf("YAML unmarshal failed: %v", err.Error())
 	}
 	if out.Title != "goldmark-meta" {
-		t.Errorf("Title must be %s, but got %v", "goldmark-meta", out.Title)
+		t.Errorf("Title must be 'goldmark-meta', but got '%s'", out.Title)
+	}
+	if len(out.Tags) != 1 {
+		t.Error("Tags must be a slice that has 1 element")
+	}
+	if out.Tags[0] != "one" {
+		t.Errorf("First tag must be 'one' but got '%s'", out.Tags[0])
 	}
 	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("should render '<h1>Hello goldmark-meta</h1>', but '%s'", buf.String())
+		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
 	}
 }
 
@@ -57,10 +64,10 @@ func TestNoMeta(t *testing.T) {
 		t.Error("YAML unmarshal failed")
 	}
 	if out.Title != "" {
-		t.Errorf("Title must be empty, but got %v", out.Title)
+		t.Errorf("Title must be empty, but got '%s'", out.Title)
 	}
 	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("should render '<h1>Hello goldmark-meta</h1>', but '%s'", buf.String())
+		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
 	}
 }
 
@@ -81,10 +88,10 @@ func TestEmptyMeta(t *testing.T) {
 		t.Error("YAML unmarshal failed")
 	}
 	if out.Title != "" {
-		t.Errorf("Title must be empty, but got %v", out.Title)
+		t.Errorf("Title must be empty, but got '%s'", out.Title)
 	}
 	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("should render '<h1>Hello goldmark-meta</h1>', but '%s'", buf.String())
+		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
 	}
 }
 
