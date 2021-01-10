@@ -7,6 +7,7 @@ goldmark-meta is an extension for the [goldmark](http://github.com/yuin/goldmark
 There are significant changes from the upstream [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta). The extension is largely simplified and has undergone the following changes.
 - Rendering a table is no longer supported
 - YAML metadata is accessed via a typical `Unmarshal` interface
+- YAML metadata must use a separator line of minimum three `-` characters
 
 ## Usage
 
