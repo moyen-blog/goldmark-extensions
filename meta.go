@@ -17,13 +17,13 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var contextKey = parser.NewContextKey()
+var contextKeyMeta = parser.NewContextKey()
 
 // Unmarshal attempts to unmarshal YAML metadata into the provided struct
 func Unmarshal(pc parser.Context, out interface{}) error {
-	v := pc.Get(contextKey)
+	v := pc.Get(contextKeyMeta)
 	if v == nil {
-		return nil
+		return nil // Buffer never set, no YAML
 	}
 	buf, ok := v.(bytes.Buffer)
 	if !ok {
@@ -44,11 +44,6 @@ func isSeparator(line []byte) bool {
 type metaParser struct{}
 
 var defaultMetaParser = &metaParser{}
-
-// NewParser returns a BlockParser that can parse YAML metadata blocks.
-func NewParser() parser.BlockParser {
-	return defaultMetaParser
-}
 
 func (b *metaParser) Trigger() []byte {
 	return []byte{'-'}
@@ -83,7 +78,7 @@ func (b *metaParser) Close(node gast.Node, reader text.Reader, pc parser.Context
 		segment := lines.At(i)
 		buf.Write(segment.Value(reader.Source()))
 	}
-	pc.Set(contextKey, buf)
+	pc.Set(contextKeyMeta, buf)
 	node.Parent().RemoveChild(node.Parent(), node)
 }
 
@@ -95,21 +90,15 @@ func (b *metaParser) CanAcceptIndentedLine() bool {
 	return false
 }
 
-type meta struct{}
+type metadataExtension struct{}
 
-// Meta is a extension for the goldmark.
-var Meta = &meta{}
+// MetadataExtension is a Goldmark extension
+var MetadataExtension = &metadataExtension{}
 
-// New returns a new Meta extension.
-func New() goldmark.Extender {
-	e := &meta{}
-	return e
-}
-
-func (e *meta) Extend(m goldmark.Markdown) {
+func (e *metadataExtension) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithBlockParsers(
-			util.Prioritized(NewParser(), 0),
+			util.Prioritized(defaultMetaParser, 0),
 		),
 	)
 }

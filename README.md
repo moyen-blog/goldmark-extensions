@@ -52,7 +52,7 @@ import (
 func main() {
     markdown := goldmark.New(
         goldmark.WithExtensions(
-            meta.Meta,
+            meta.MetadataExtension,
         ),
     )
     source := `---

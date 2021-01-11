@@ -8,9 +8,9 @@ import (
 	"github.com/yuin/goldmark/parser"
 )
 
-var markdown = goldmark.New(
+var markdownMeta = goldmark.New(
 	goldmark.WithExtensions(
-		New(),
+		MetadataExtension,
 	),
 )
 
@@ -21,11 +21,11 @@ tags:
   - one
 ignored: hi
 ---
-# Hello goldmark-meta`
+# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	out := struct {
@@ -44,17 +44,17 @@ ignored: hi
 	if out.Tags[0] != "one" {
 		t.Errorf("First tag must be 'one' but got '%s'", out.Tags[0])
 	}
-	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
+	if buf.String() != "<h1>Hello</h1>\n" {
+		t.Errorf("Should render '<h1>Hello</h1>', but got '%s'", buf.String())
 	}
 }
 
 func TestNoMeta(t *testing.T) {
-	source := `# Hello goldmark-meta`
+	source := `# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	out := struct {
@@ -66,19 +66,19 @@ func TestNoMeta(t *testing.T) {
 	if out.Title != "" {
 		t.Errorf("Title must be empty, but got '%s'", out.Title)
 	}
-	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
+	if buf.String() != "<h1>Hello</h1>\n" {
+		t.Errorf("Should render '<h1>Hello</h1>', but got '%s'", buf.String())
 	}
 }
 
 func TestEmptyMeta(t *testing.T) {
 	source := `---
 ---
-# Hello goldmark-meta`
+# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	out := struct {
@@ -90,8 +90,8 @@ func TestEmptyMeta(t *testing.T) {
 	if out.Title != "" {
 		t.Errorf("Title must be empty, but got '%s'", out.Title)
 	}
-	if buf.String() != "<h1>Hello goldmark-meta</h1>\n" {
-		t.Errorf("Should render '<h1>Hello goldmark-meta</h1>', but got '%s'", buf.String())
+	if buf.String() != "<h1>Hello</h1>\n" {
+		t.Errorf("Should render '<h1>Hello</h1>', but got '%s'", buf.String())
 	}
 }
 
@@ -100,14 +100,13 @@ func TestMetaError(t *testing.T) {
 bad:
   - : {
   }
-    - markdown
-    - goldmark
+    - one
 ---
-# Hello goldmark-meta`
+# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
 		panic(err)
 	}
 	out := struct{}{}
@@ -117,12 +116,12 @@ bad:
 }
 
 func TestInvalidMetaBuffer(t *testing.T) {
-	source := `# Hello goldmark-meta`
+	source := `# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	context.Set(contextKey, 0) // Not the expected bytes.Buffer
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(parser.NewContext())); err != nil {
+	context.Set(contextKeyMeta, 0) // Not the expected bytes.Buffer
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(parser.NewContext())); err != nil {
 		panic(err)
 	}
 	out := struct {
