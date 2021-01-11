@@ -29,11 +29,7 @@ func Unmarshal(pc parser.Context, out interface{}) error {
 	if !ok {
 		return errors.New("Failed to get YAML buffer")
 	}
-	err := yaml.Unmarshal(buf.Bytes(), out)
-	if err != nil {
-		return errors.New("Failed to unmarshal YAML metadata")
-	}
-	return nil
+	return yaml.Unmarshal(buf.Bytes(), out)
 }
 
 func isSeparator(line []byte) bool {

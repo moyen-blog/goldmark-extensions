@@ -26,7 +26,7 @@ ignored: hi
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		panic(err)
+		t.Error("Failed to convert markdown")
 	}
 	out := struct {
 		Title string
@@ -55,7 +55,7 @@ func TestNoMeta(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		panic(err)
+		t.Error("Failed to convert markdown")
 	}
 	out := struct {
 		Title string
@@ -79,7 +79,7 @@ func TestEmptyMeta(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		panic(err)
+		t.Error("Failed to convert markdown")
 	}
 	out := struct {
 		Title string
@@ -107,7 +107,7 @@ bad:
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		panic(err)
+		t.Error("Failed to convert markdown")
 	}
 	out := struct{}{}
 	if err := Unmarshal(context, &out); err == nil {
@@ -122,7 +122,7 @@ func TestInvalidMetaBuffer(t *testing.T) {
 	context := parser.NewContext()
 	context.Set(contextKeyMeta, 0) // Not the expected bytes.Buffer
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(parser.NewContext())); err != nil {
-		panic(err)
+		t.Error("Failed to convert markdown")
 	}
 	out := struct {
 		Title string

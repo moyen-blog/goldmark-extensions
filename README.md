@@ -19,6 +19,8 @@ go get github.com/moyen-blog/goldmark-meta
 
 ## YAML Front Matter
 
+Include the Goldmark extension with `meta.MetadataExtension`.
+
 ### Markdown Syntax
 
 YAML front matter is metadata defined at the top of a markdown document. It can not contain markdown itself. The front matter block must be surrounded by lines containing the YAML metadata separator `---`. If metadata is defined, the separator must be the first line of the document. The YAML metadata block must end with a YAML metadata separator.
@@ -39,12 +41,13 @@ tags:
 
 ### Accessing Metadata
 
+The metadata can be parsed via the `meta.Unmarshal()` function.
+
 ```go
 import (
     "bytes"
     "fmt"
     "github.com/yuin/goldmark"
-    "github.com/yuin/goldmark/extension"
     "github.com/yuin/goldmark/parser"
     meta "github.com/moyen-blog/goldmark-meta"
 )
@@ -84,6 +87,8 @@ tags:
 
 ## Markdown Text Snippet
 
+Include the Goldmark extension with `meta.SnippetExtension(max)` where `max` is the maximum length of the generated snippet.
+
 ### Markdown Syntax
 
 There is no specific syntax needed for generating a text snippet. The snippet is made up of text from paragraphs within the markdown document only.
@@ -104,4 +109,38 @@ More text here.
 
 ### Accessing Text Snippet
 
-TODO
+The generated snippet is accessed via the `meta.Snippet()` function.
+
+```go
+import (
+    "bytes"
+    "fmt"
+    "github.com/yuin/goldmark"
+    "github.com/yuin/goldmark/parser"
+    meta "github.com/moyen-blog/goldmark-meta"
+)
+
+func main() {
+    var markdown = goldmark.New(
+        goldmark.WithExtensions(
+            meta.SnippetExtension(100), // Maximum length of snippet
+        ),
+    )
+    source := `# Hello
+Paragraph text here.
+
+Another one.
+And continued here.`
+
+    var buf bytes.Buffer
+    context := parser.NewContext()
+    if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+        panic(err)
+    }
+    s, err := meta.Snippet(context)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(s)
+}
+```
