@@ -2,6 +2,7 @@ package meta
 
 import (
 	"bytes"
+	"strings"
 )
 
 type snippetBuffer struct {
@@ -15,24 +16,22 @@ func newSnippetBuffer(max int) *snippetBuffer {
 	}
 }
 
-func (s *snippetBuffer) Write(p []byte) (n int, err error) {
+func (s *snippetBuffer) Write(p []byte) (int, error) {
 	if len(p) == 0 || s.IsFull() {
 		return 0, nil
 	}
-	if !s.IsEmpty() {
-		s.buf.WriteByte(' ')
-	}
-	if len(p) > s.Room() {
-		return s.buf.Write(p[:s.Room()])
-	}
-	if p[len(p)-1] == '\n' { // Skip the occasional newline that slips in
-		return s.buf.Write(p[:len(p)-1])
+	room := s.max - s.buf.Len()
+	if len(p) > room {
+		return s.buf.Write(p[:room])
 	}
 	return s.buf.Write(p)
 }
 
-func (s *snippetBuffer) Room() int {
-	return s.max - s.buf.Len()
+func (s *snippetBuffer) WriteByte(b byte) error {
+	if s.IsFull() {
+		return nil
+	}
+	return s.buf.WriteByte(b)
 }
 
 func (s *snippetBuffer) IsEmpty() bool {
@@ -43,6 +42,10 @@ func (s *snippetBuffer) IsFull() bool {
 	return s.max-s.buf.Len() <= 0
 }
 
+func (s *snippetBuffer) Reset() {
+	s.buf.Reset()
+}
+
 func (s *snippetBuffer) String() string {
-	return s.buf.String()
+	return strings.TrimSuffix(s.buf.String(), " ")
 }

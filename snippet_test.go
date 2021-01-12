@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/parser"
 )
 
 var markdownSnippet = goldmark.New(
@@ -22,13 +21,12 @@ Another one.
 And continued here.`
 
 	var buf bytes.Buffer
-	context := parser.NewContext()
-	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownSnippet.Convert([]byte(source), &buf); err != nil {
 		t.Error("Failed to convert markdown")
 	}
-	s, err := Snippet(context)
+	s, err := Snippet(markdownSnippet)
 	if err != nil {
-		t.Error("Failed to get snippet")
+		t.Error("Failed to get snippet", err.Error())
 	}
 	if s != "Paragraph text here. Another one. And continued here." {
 		t.Errorf("Snippet must be 'Paragraph text here. Another one. And continued here.', but got '%s'", s)
@@ -43,11 +41,10 @@ func TestEmptySnippet(t *testing.T) {
 	source := `# Hello`
 
 	var buf bytes.Buffer
-	context := parser.NewContext()
-	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownSnippet.Convert([]byte(source), &buf); err != nil {
 		t.Error("Failed to convert markdown")
 	}
-	s, err := Snippet(context)
+	s, err := Snippet(markdownSnippet)
 	if err != nil {
 		t.Error("Failed to get snippet")
 	}
@@ -59,21 +56,49 @@ func TestEmptySnippet(t *testing.T) {
 	}
 }
 
-func TestTrucatedSnippet(t *testing.T) {
+func TestComplexSnippet(t *testing.T) {
+	source := `# Heading
+[Link](link) *italics*
+![image](image)continued.
+
+**Bold** [link.](link)
+> Block quote.
+
+    Code.
+1. Ordered.
+- Unordered
+continued.
+
+## Subheading
+
+![Image](image)` + "`Inline.`"
+
+	var buf bytes.Buffer
+	if err := markdownSnippet.Convert([]byte(source), &buf); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	s, err := Snippet(markdownSnippet)
+	if err != nil {
+		t.Error("Failed to get snippet")
+	}
+	if s != "Link italics continued. Bold link. Inline." {
+		t.Errorf("Snippet must be 'Link italics continued. Bold link. Inline.', but got '%s'", s)
+	}
+}
+
+func TestTruncatedSnippet(t *testing.T) {
 	source := `# Hello
 Paragraph text here.`
-
-	markdown := goldmark.New(
+	markdownSnippet := goldmark.New(
 		goldmark.WithExtensions(
 			SnippetExtension(5),
 		),
 	)
 	var buf bytes.Buffer
-	context := parser.NewContext()
-	if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownSnippet.Convert([]byte(source), &buf); err != nil {
 		t.Error("Failed to convert markdown")
 	}
-	s, err := Snippet(context)
+	s, err := Snippet(markdownSnippet)
 	if err != nil {
 		t.Error("Failed to get snippet")
 	}
@@ -88,14 +113,13 @@ Paragraph text here.`
 
 func TestSnippetError(t *testing.T) {
 	source := `# Hello`
+	var markdownSnippet = goldmark.New()
 
 	var buf bytes.Buffer
-	context := parser.NewContext()
-	context.Set(contextKeySnippet, 0) // Not the expected string
-	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+	if err := markdownSnippet.Convert([]byte(source), &buf); err != nil {
 		t.Error("Failed to convert markdown")
 	}
-	if _, err := Snippet(context); err == nil {
-		t.Error("Should throw snippet not available error")
+	if _, err := Snippet(markdownSnippet); err == nil {
+		t.Error("Should throw with wrong renderer")
 	}
 }
