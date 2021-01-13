@@ -115,15 +115,18 @@ bad:
 	}
 }
 
-func TestInvalidMetaBuffer(t *testing.T) {
-	source := `# Hello`
+func TestMetaInvalidBuffer(t *testing.T) {
+	source := `---
+title: goldmark-meta
+---
+# Hello`
 
 	var buf bytes.Buffer
 	context := parser.NewContext()
-	context.Set(contextKeyMeta, 0) // Not the expected bytes.Buffer
-	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(parser.NewContext())); err != nil {
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
 		t.Error("Failed to convert markdown")
 	}
+	context.Set(contextKeyMeta, 0) // Not the expected bytes.Buffer
 	out := struct {
 		Title string
 	}{}

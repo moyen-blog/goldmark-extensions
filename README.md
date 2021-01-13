@@ -133,10 +133,11 @@ Another one.
 And continued here.`
 
     var buf bytes.Buffer
-    if err := markdown.Convert([]byte(source), &buf); err != nil {
+    context := parser.NewContext()
+    if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
         panic(err)
     }
-    s, err := meta.Snippet(markdown)
+    s, err := meta.Snippet(context)
     if err != nil {
         panic(err)
     }

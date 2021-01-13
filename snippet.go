@@ -2,33 +2,34 @@ package meta
 
 import (
 	"errors"
-	"io"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/renderer"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/text"
+	"github.com/yuin/goldmark/util"
 )
+
+var contextKeySnippet = parser.NewContextKey()
 
 // Snippet returns the snippet made up of text from the underlying markdown document
 // Only paragraph nodes are used to generate the snippet
-func Snippet(g goldmark.Markdown) (string, error) {
-	if r, ok := g.Renderer().(snippetRenderer); ok {
-		if r.buf == nil {
-			return "", errors.New("Snippet buffer is nil; renderer.Render() may not have been called")
-		}
-		return r.buf.String(), nil
+func Snippet(pc parser.Context) (string, error) {
+	v := pc.Get(contextKeySnippet)
+	s, ok := v.(string)
+	if !ok {
+		return "", errors.New("Failed to get snippet")
 	}
-	return "", errors.New("Failed to get underlying snippet renderer")
+	return s, nil
 }
 
-type snippetRenderer struct {
-	baseRenderer renderer.Renderer
-	buf          *snippetBuffer
+type snippetTransformer struct {
+	max int
 }
 
-func (r snippetRenderer) Walker(source []byte) ast.Walker {
+func (r snippetTransformer) Walker(source []byte, buf *snippetBuffer) ast.Walker {
 	return func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if r.buf.IsFull() {
+		if buf.IsFull() {
 			return ast.WalkStop, nil
 		}
 		if entering && n.Kind() == ast.KindParagraph {
@@ -36,14 +37,14 @@ func (r snippetRenderer) Walker(source []byte) ast.Walker {
 				if c.Kind() == ast.KindImage {
 					continue // Skip image alt text
 				}
-				r.buf.Write(c.Text(source))
+				buf.Write(c.Text(source))
 				if t, ok := c.(*ast.Text); ok {
 					if t.SoftLineBreak() {
-						r.buf.WriteByte(' ')
+						buf.WriteByte(' ')
 					}
 				}
 			}
-			r.buf.WriteByte(' ')
+			buf.WriteByte(' ')
 		}
 		if n.Type() == ast.TypeBlock { // Don't go deeper than block nodes
 			return ast.WalkSkipChildren, nil
@@ -52,14 +53,10 @@ func (r snippetRenderer) Walker(source []byte) ast.Walker {
 	}
 }
 
-func (r snippetRenderer) Render(w io.Writer, source []byte, n ast.Node) error {
-	r.buf.Reset() // Clear buffer in case of previous render
-	ast.Walk(n, r.Walker(source))
-	return r.baseRenderer.Render(w, source, n)
-}
-
-func (r snippetRenderer) AddOptions(opts ...renderer.Option) {
-	r.baseRenderer.AddOptions(opts...)
+func (r snippetTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
+	buf := newSnippetBuffer(r.max)
+	ast.Walk(node, r.Walker(reader.Source(), buf))
+	pc.Set(contextKeySnippet, buf.String())
 }
 
 type snippetExtension struct {
@@ -67,10 +64,10 @@ type snippetExtension struct {
 }
 
 func (e *snippetExtension) Extend(m goldmark.Markdown) {
-	m.SetRenderer(snippetRenderer{
-		m.Renderer(),
-		newSnippetBuffer(e.max),
-	})
+	p := int(^uint(0) >> 1) // Lowest priority
+	m.Parser().AddOptions(parser.WithASTTransformers(
+		util.Prioritized(snippetTransformer{e.max}, p), // Generate snippet after all other transformers applied
+	))
 }
 
 // SnippetExtension returns a Goldmark extension
