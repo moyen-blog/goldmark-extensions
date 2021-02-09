@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/yuin/goldmark"
-	gast "github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
@@ -30,7 +30,7 @@ func Unmarshal(pc parser.Context, out interface{}) error {
 }
 
 func isSeparator(line []byte) bool {
-	r := regexp.MustCompile(`\s*-{3,}\s*`)
+	r := regexp.MustCompile(`^\s*-{3,}\s*$`)
 	return r.Match(line)
 }
 
@@ -42,19 +42,19 @@ func (b *metaParser) Trigger() []byte {
 	return []byte{'-'}
 }
 
-func (b *metaParser) Open(parent gast.Node, reader text.Reader, pc parser.Context) (gast.Node, parser.State) {
+func (b *metaParser) Open(parent ast.Node, reader text.Reader, pc parser.Context) (ast.Node, parser.State) {
 	linenum, _ := reader.Position()
 	if linenum != 0 {
 		return nil, parser.NoChildren
 	}
 	line, _ := reader.PeekLine()
 	if isSeparator(line) {
-		return gast.NewTextBlock(), parser.NoChildren
+		return ast.NewTextBlock(), parser.NoChildren
 	}
 	return nil, parser.NoChildren
 }
 
-func (b *metaParser) Continue(node gast.Node, reader text.Reader, pc parser.Context) parser.State {
+func (b *metaParser) Continue(node ast.Node, reader text.Reader, pc parser.Context) parser.State {
 	line, segment := reader.PeekLine()
 	if isSeparator(line) {
 		reader.Advance(segment.Len())
@@ -64,7 +64,7 @@ func (b *metaParser) Continue(node gast.Node, reader text.Reader, pc parser.Cont
 	return parser.Continue | parser.NoChildren
 }
 
-func (b *metaParser) Close(node gast.Node, reader text.Reader, pc parser.Context) {
+func (b *metaParser) Close(node ast.Node, reader text.Reader, pc parser.Context) {
 	lines := node.Lines()
 	var buf bytes.Buffer
 	for i := 0; i < lines.Len(); i++ {

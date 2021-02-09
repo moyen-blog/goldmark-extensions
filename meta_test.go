@@ -95,6 +95,32 @@ func TestEmptyMeta(t *testing.T) {
 	}
 }
 
+func TestBadMetaSeparator(t *testing.T) {
+	source := `----- bad
+title: goldmark-meta
+----- bad
+# Hello`
+
+	var buf bytes.Buffer
+	context := parser.NewContext()
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	out := struct {
+		Title string
+	}{}
+	if err := Unmarshal(context, &out); err != nil {
+		t.Error("YAML unmarshal failed")
+	}
+	if out.Title != "" {
+		t.Errorf("Title must be empty, but got '%s'", out.Title)
+	}
+	expected := "<p>----- bad\ntitle: goldmark-meta\n----- bad</p>\n<h1>Hello</h1>\n"
+	if buf.String() != expected {
+		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
+	}
+}
+
 func TestMetaError(t *testing.T) {
 	source := `---
 bad:
