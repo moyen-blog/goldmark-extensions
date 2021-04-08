@@ -85,9 +85,6 @@ func (b *metaParser) CanAcceptIndentedLine() bool {
 
 type metadataExtension struct{}
 
-// MetadataExtension is a Goldmark extension
-var MetadataExtension = &metadataExtension{}
-
 func (e *metadataExtension) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(
 		parser.WithBlockParsers(
@@ -95,3 +92,6 @@ func (e *metadataExtension) Extend(m goldmark.Markdown) {
 		),
 	)
 }
+
+// MetadataExtension is a Goldmark extension
+var MetadataExtension = &metadataExtension{}
