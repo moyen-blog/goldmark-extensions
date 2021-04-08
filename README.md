@@ -1,12 +1,12 @@
-# Goldmark Meta
+# Goldmark Extensions
 
-Goldmark Meta is an extension for [Goldmark](http://github.com/yuin/goldmark) that allows you to define document metadata in YAML format. Additionally, Goldmark Meta optionally generates a snipped of the markdown documents text.
+Goldmark Extensions is a collection of extensions for [Goldmark](http://github.com/yuin/goldmark).
 
-Originally forked from [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta), this project has undergone large, breaking changes and now stands on its own.
+Originally forked from [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta), this project has undergone breaking changes and now stands on its own.
 
 ## Overview
 
-Goldmark Meta provides the following functions to extend Goldmark.
+Goldmark Extensions provides the following functions to extend Goldmark.
 
 1. Scrape document metadata from [YAML front matter](https://jekyllrb.com/docs/front-matter/) defined at the top of a markdown document.
 2. Aggregate a configurable-length snippet of the markdown documents text content.
@@ -14,12 +14,12 @@ Goldmark Meta provides the following functions to extend Goldmark.
 ## Installation
 
 ```
-go get github.com/moyen-blog/goldmark-meta
+go get github.com/moyen-blog/goldmark-extensions
 ```
 
 ## YAML Front Matter
 
-Include the Goldmark extension with `meta.MetadataExtension`.
+Include the Goldmark extension with `extensions.MetadataExtension`.
 
 ### Markdown Syntax
 
@@ -31,7 +31,7 @@ Example:
 
 ```
 ---
-title: goldmark-meta
+title: goldmark-extensions
 tags:
   - one
 ---
@@ -49,23 +49,23 @@ import (
     "fmt"
     "github.com/yuin/goldmark"
     "github.com/yuin/goldmark/parser"
-    meta "github.com/moyen-blog/goldmark-meta"
+    extensions "github.com/moyen-blog/goldmark-extensions"
 )
 
 func main() {
     markdown := goldmark.New(
         goldmark.WithExtensions(
-            meta.MetadataExtension,
+            extensions.MetadataExtension,
         ),
     )
     source := `---
-title: goldmark-meta
+title: goldmark-extensions
 summary: Add YAML metadata to the document
 tags:
   - one
 ---
 
-# Hello goldmark-meta
+# Hello goldmark-extensions
 `
 
     var buf bytes.Buffer
@@ -78,7 +78,7 @@ tags:
         Title string
         Tags []string
     }{}
-    if err := meta.Unmarshal(context, &out); err != nil {
+    if err := extensions.Unmarshal(context, &out); err != nil {
         panic(err)
     }
     fmt.Println(out.Title, out.Tags)
@@ -87,7 +87,7 @@ tags:
 
 ## Markdown Text Snippet
 
-Include the Goldmark extension with `meta.SnippetExtension(max)` where `max` is the maximum length of the generated snippet.
+Include the Goldmark extension with `extensions.SnippetExtension(max)` where `max` is the maximum length of the generated snippet.
 
 ### Markdown Syntax
 
@@ -109,7 +109,7 @@ More text here.
 
 ### Accessing Text Snippet
 
-The generated snippet is accessed via the `meta.Snippet()` function.
+The generated snippet is accessed via the `extensions.Snippet()` function.
 
 ```go
 import (
@@ -117,13 +117,13 @@ import (
     "fmt"
     "github.com/yuin/goldmark"
     "github.com/yuin/goldmark/parser"
-    meta "github.com/moyen-blog/goldmark-meta"
+    extensions "github.com/moyen-blog/goldmark-extensions"
 )
 
 func main() {
     var markdown = goldmark.New(
         goldmark.WithExtensions(
-            meta.SnippetExtension(100), // Maximum length of snippet
+            extensions.SnippetExtension(100), // Maximum length of snippet
         ),
     )
     source := `# Hello
@@ -137,7 +137,7 @@ And continued here.`
     if err := markdown.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
         panic(err)
     }
-    s, err := meta.Snippet(context)
+    s, err := extensions.Snippet(context)
     if err != nil {
         panic(err)
     }

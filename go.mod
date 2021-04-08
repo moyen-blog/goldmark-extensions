@@ -1,4 +1,4 @@
-module github.com/moyen-blog/goldmark-meta
+module github.com/moyen-blog/goldmark-extensions
 
 go 1.15
 
