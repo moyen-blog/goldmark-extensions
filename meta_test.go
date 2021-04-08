@@ -95,6 +95,58 @@ func TestEmptyMeta(t *testing.T) {
 	}
 }
 
+func TestEmbeddedMeta(t *testing.T) {
+	source := `# Hello
+---
+title: goldmark-meta
+---`
+
+	var buf bytes.Buffer
+	context := parser.NewContext()
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	out := struct {
+		Title string
+	}{}
+	if err := Unmarshal(context, &out); err != nil {
+		t.Error("YAML unmarshal failed")
+	}
+	if out.Title != "" {
+		t.Errorf("Title must be empty, but got '%s'", out.Title)
+	}
+	expected := "<h1>Hello</h1>\n<hr>\n<h2>title: goldmark-meta</h2>\n"
+	if buf.String() != expected {
+		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
+	}
+}
+
+func TestIndentedLine(t *testing.T) {
+	source := `    ---
+      title: goldmark-meta
+    ---
+# Hello`
+
+	var buf bytes.Buffer
+	context := parser.NewContext()
+	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	out := struct {
+		Title string
+	}{}
+	if err := Unmarshal(context, &out); err != nil {
+		t.Error("YAML unmarshal failed")
+	}
+	if out.Title != "" {
+		t.Errorf("Title must be empty, but got '%s'", out.Title)
+	}
+	expected := "<pre><code>---\n  title: goldmark-meta\n---\n</code></pre>\n<h1>Hello</h1>\n"
+	if buf.String() != expected {
+		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
+	}
+}
+
 func TestBadMetaSeparator(t *testing.T) {
 	source := `----- bad
 title: goldmark-meta
