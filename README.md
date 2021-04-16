@@ -10,7 +10,7 @@ Goldmark Extensions provides the following functions to extend Goldmark.
 
 1. Scrape document metadata from [YAML front matter](https://jekyllrb.com/docs/front-matter/) defined at the top of a markdown document.
 2. Aggregate a configurable-length snippet of the markdown documents text content.
-3. Add inline CSS `list-style-type:none` to tasklist items.
+3. Add attribute `class="task"` to tasklist items.
 
 ## Installation
 
@@ -151,7 +151,7 @@ Include the Goldmark extension with `extensions.TasklistExtension`. This extensi
 
 ### Markdown Syntax
 
-Standard tasklist markdown syntax applies. With the inline style applied, further styling can be applied specifically to tasklist items while leaving standard list items unaffected e.g. `li[style*="list-style-type:none"]`.
+Standard tasklist markdown syntax applies. With the class applied, further styling can be applied specifically to tasklist items while leaving standard list items unaffected e.g. `li.task`.
 
 Example:
 
@@ -164,4 +164,4 @@ Here's my list:
 - [ ] Checked task
 ```
 
-In the previous example, only the first and third items will have `list-style-type:none` inline styling applied.
+In the previous example, only the first and third items will have `class="task"` inline styling applied.

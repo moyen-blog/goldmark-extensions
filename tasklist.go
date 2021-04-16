@@ -17,7 +17,7 @@ func (b *tasklistTransformer) Transform(node *ast.Document, reader text.Reader, 
 	ast.Walk(node, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 		if entering && node.Kind() == ast.KindListItem {
 			if node.FirstChild().FirstChild().Kind() == east.KindTaskCheckBox {
-				node.SetAttributeString("style", []byte("list-style-type:none"))
+				node.SetAttributeString("class", []byte("task"))
 			}
 		}
 		if node.Kind() == ast.KindDocument || node.Kind() == ast.KindList {

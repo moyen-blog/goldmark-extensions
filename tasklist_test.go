@@ -24,8 +24,8 @@ func TestUnorderedTasklist(t *testing.T) {
 		t.Error("Failed to convert markdown")
 	}
 	expected := `<ul>
-<li style="list-style-type:none"><input disabled="" type="checkbox"> Unchecked</li>
-<li style="list-style-type:none"><input checked="" disabled="" type="checkbox"> Checked</li>
+<li class="task"><input disabled="" type="checkbox"> Unchecked</li>
+<li class="task"><input checked="" disabled="" type="checkbox"> Checked</li>
 </ul>
 `
 	if buf.String() != expected {
@@ -42,8 +42,8 @@ func TestOrderedTasklist(t *testing.T) {
 		t.Error("Failed to convert markdown")
 	}
 	expected := `<ol>
-<li style="list-style-type:none"><input disabled="" type="checkbox"> Unchecked</li>
-<li style="list-style-type:none"><input checked="" disabled="" type="checkbox"> Checked</li>
+<li class="task"><input disabled="" type="checkbox"> Unchecked</li>
+<li class="task"><input checked="" disabled="" type="checkbox"> Checked</li>
 </ol>
 `
 	if buf.String() != expected {
