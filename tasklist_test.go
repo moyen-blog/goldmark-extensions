@@ -70,3 +70,23 @@ func TestStandardList(t *testing.T) {
 		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
 	}
 }
+
+func TestMissingListItem(t *testing.T) {
+	source := `* One
+*
+* Three`
+
+	var buf bytes.Buffer
+	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	expected := `<ul>
+<li>One</li>
+<li></li>
+<li>Three</li>
+</ul>
+`
+	if buf.String() != expected {
+		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
+	}
+}

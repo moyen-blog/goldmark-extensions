@@ -16,6 +16,9 @@ var defaultTasklistTransformer = &tasklistTransformer{}
 func (b *tasklistTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
 	ast.Walk(node, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 		if entering && node.Kind() == ast.KindListItem {
+			if node.FirstChild() == nil || node.FirstChild().FirstChild() == nil {
+				return ast.WalkSkipChildren, nil
+			}
 			if node.FirstChild().FirstChild().Kind() == east.KindTaskCheckBox {
 				node.SetAttributeString("class", []byte("task"))
 			}
