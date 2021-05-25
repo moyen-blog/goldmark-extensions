@@ -90,3 +90,28 @@ func TestMissingListItem(t *testing.T) {
 		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
 	}
 }
+
+func TestEmbeddedTaskList(t *testing.T) {
+	source := `1. One
+    - [ ] Unchecked
+    - [x] Checked
+2. Two`
+
+	var buf bytes.Buffer
+	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
+		t.Error("Failed to convert markdown")
+	}
+	expected := `<ol>
+<li>One
+<ul>
+<li class="task"><input disabled="" type="checkbox"> Unchecked</li>
+<li class="task"><input checked="" disabled="" type="checkbox"> Checked</li>
+</ul>
+</li>
+<li>Two</li>
+</ol>
+`
+	if buf.String() != expected {
+		t.Errorf("Should render '%s', but got '%s'", expected, buf.String())
+	}
+}
