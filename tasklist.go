@@ -3,39 +3,45 @@ package extensions
 import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
-	east "github.com/yuin/goldmark/extension/ast"
+	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
 )
 
-type tasklistTransformer struct{}
+type taskCheckBoxParser struct {
+	super parser.InlineParser
+}
 
-var defaultTasklistTransformer = &tasklistTransformer{}
+var defaultTaskCheckBoxParser = &taskCheckBoxParser{
+	extension.NewTaskCheckBoxParser(),
+}
 
-func (b *tasklistTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
-	ast.Walk(node, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
-		if !entering || (node.Type() != ast.TypeDocument && node.Type() != ast.TypeBlock) {
-			return ast.WalkSkipChildren, nil
-		}
-		if node.Kind() == ast.KindListItem && node.HasChildren() && node.FirstChild().HasChildren() {
-			if node.FirstChild().FirstChild().Kind() == east.KindTaskCheckBox {
-				node.SetAttributeString("class", []byte("task"))
-			}
-		}
-		return ast.WalkContinue, nil
-	})
+func (s *taskCheckBoxParser) Trigger() []byte {
+	return s.super.Trigger()
+}
+
+func (s *taskCheckBoxParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
+	n := s.super.Parse(parent, block, pc)
+	if n != nil && parent.Parent().Kind() == ast.KindListItem {
+		parent.Parent().SetAttributeString("class", []byte("task"))
+	}
+	return n
 }
 
 type tasklistExtension struct{}
 
 func (e *tasklistExtension) Extend(m goldmark.Markdown) {
-	m.Parser().AddOptions(
-		parser.WithASTTransformers(
-			util.Prioritized(defaultTasklistTransformer, 0),
-		),
-	)
+	m.Parser().AddOptions(parser.WithInlineParsers(
+		util.Prioritized(defaultTaskCheckBoxParser, 0),
+	))
+	m.Renderer().AddOptions(renderer.WithNodeRenderers(
+		util.Prioritized(extension.NewTaskCheckBoxHTMLRenderer(), 500),
+	))
 }
 
-// TasklistExtension is a Goldmark extension
+// TasklistExtension is a Goldmark extension thinly wrapping the tasklist extension
+// It adds "task" as a class to tasklist items
+// See https://github.com/yuin/goldmark/blob/master/extension/tasklist.go
 var TasklistExtension = &tasklistExtension{}

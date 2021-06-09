@@ -5,12 +5,10 @@ import (
 	"testing"
 
 	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/extension"
 )
 
 var markdownTasklist = goldmark.New(
 	goldmark.WithExtensions(
-		extension.TaskList,
 		TasklistExtension,
 	),
 )

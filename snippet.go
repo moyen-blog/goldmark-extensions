@@ -27,8 +27,9 @@ type snippetTransformer struct {
 	max int
 }
 
-func (r snippetTransformer) Walker(source []byte, buf *snippetBuffer) ast.Walker {
-	return func(n ast.Node, entering bool) (ast.WalkStatus, error) {
+func (r snippetTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
+	buf := newSnippetBuffer(r.max)
+	ast.Walk(node, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if buf.IsFull() {
 			return ast.WalkStop, nil
 		}
@@ -37,7 +38,7 @@ func (r snippetTransformer) Walker(source []byte, buf *snippetBuffer) ast.Walker
 				if c.Kind() == ast.KindImage {
 					continue // Skip image alt text
 				}
-				buf.Write(c.Text(source))
+				buf.Write(c.Text(reader.Source()))
 				if t, ok := c.(*ast.Text); ok {
 					if t.SoftLineBreak() {
 						buf.WriteByte(' ')
@@ -50,12 +51,7 @@ func (r snippetTransformer) Walker(source []byte, buf *snippetBuffer) ast.Walker
 			return ast.WalkSkipChildren, nil
 		}
 		return ast.WalkContinue, nil
-	}
-}
-
-func (r snippetTransformer) Transform(node *ast.Document, reader text.Reader, pc parser.Context) {
-	buf := newSnippetBuffer(r.max)
-	ast.Walk(node, r.Walker(reader.Source(), buf))
+	})
 	pc.Set(contextKeySnippet, buf.String())
 }
 
