@@ -143,3 +143,26 @@ func TestSnippetInvalidString(t *testing.T) {
 		t.Error("Should throw because of invalid snippet string")
 	}
 }
+
+func TestSnippetBuffer(t *testing.T) {
+	b := newSnippetBuffer(10)
+	if !b.IsEmpty() {
+		t.Error("New snippet buffer should be empty")
+	}
+	b.Write([]byte(""))
+	if !b.IsEmpty() {
+		t.Error("Snippet buffer should be empty after writing empty string")
+	}
+	b.Write([]byte("12345"))
+	if b.IsEmpty() || b.IsFull() {
+		t.Error("Snippet buffer should be neither empty nor full")
+	}
+	b.Write([]byte("67890"))
+	if !b.IsFull() {
+		t.Error("Snippet buffer should be full")
+	}
+	b.Reset()
+	if !b.IsEmpty() {
+		t.Error("Snippet buffer should be empty after reset")
+	}
+}

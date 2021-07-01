@@ -18,7 +18,7 @@ func Snippet(pc parser.Context) (string, error) {
 	v := pc.Get(contextKeySnippet)
 	s, ok := v.(string)
 	if !ok {
-		return "", errors.New("Failed to get snippet")
+		return "", errors.New("failed to get snippet")
 	}
 	return s, nil
 }

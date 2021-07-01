@@ -24,7 +24,7 @@ func Unmarshal(pc parser.Context, out interface{}) error {
 	}
 	buf, ok := v.(bytes.Buffer)
 	if !ok {
-		return errors.New("Failed to get YAML buffer")
+		return errors.New("failed to get YAML buffer")
 	}
 	return yaml.Unmarshal(buf.Bytes(), out)
 }
