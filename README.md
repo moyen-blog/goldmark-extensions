@@ -1,15 +1,15 @@
-# Goldmark Extensions
+# GoldMark Extensions
 
-Goldmark Extensions is a collection of extensions for [Goldmark](http://github.com/yuin/goldmark).
+GoldMark Extensions is a collection of extensions for [GoldMark](http://github.com/yuin/goldmark).
 
 Originally forked from [yuin/goldmark-meta](http://github.com/yuin/goldmark-meta), this project has undergone breaking changes and now stands on its own.
 
 ## Overview
 
-Goldmark Extensions provides the following functions to extend Goldmark.
+GoldMark Extensions provides the following functions to extend GoldMark.
 
-1. Scrape document metadata from [YAML front matter](https://jekyllrb.com/docs/front-matter/) defined at the top of a markdown document.
-2. Aggregate a configurable-length snippet of the markdown documents text content.
+1. Scrape document metadata from [YAML front matter](https://jekyllrb.com/docs/front-matter/) defined at the top of a Markdown document.
+2. Aggregate a configurable-length snippet of the Markdown documents text content.
 3. Add attribute `class="task"` to tasklist items.
 
 ## Installation
@@ -20,11 +20,11 @@ go get github.com/moyen-blog/goldmark-extensions
 
 ## YAML Front Matter
 
-Include the Goldmark extension with `extensions.MetadataExtension`.
+Include the GoldMark extension with `extensions.MetadataExtension`.
 
 ### Markdown Syntax
 
-YAML front matter is metadata defined at the top of a markdown document. It can not contain markdown itself. The front matter block must be surrounded by lines containing the YAML metadata separator `---`. If metadata is defined, the separator must be the first line of the document. The YAML metadata block must end with a YAML metadata separator.
+YAML front matter is metadata defined at the top of a Markdown document. It can not contain Markdown itself. The front matter block must be surrounded by lines containing the YAML metadata separator `---`. If metadata is defined, the separator must be the first line of the document. The YAML metadata block must end with a YAML metadata separator.
 
 All valid YAML is supported. The underlying parsing of YAML is done by [go-yaml/yaml](https://github.com/go-yaml/yaml).
 
@@ -88,11 +88,11 @@ tags:
 
 ## Markdown Text Snippet
 
-Include the Goldmark extension with `extensions.SnippetExtension(max)` where `max` is the maximum length of the generated snippet.
+Include the GoldMark extension with `extensions.SnippetExtension(max)` where `max` is the maximum length of the generated snippet.
 
 ### Markdown Syntax
 
-There is no specific syntax needed for generating a text snippet. The snippet is made up of text from paragraphs within the markdown document only.
+There is no specific syntax needed for generating a text snippet. The snippet is made up of text from paragraphs within the Markdown document only.
 
 Example:
 
@@ -147,11 +147,11 @@ And continued here.`
 
 ## Tasklist Styling
 
-Include the Goldmark extension with `extensions.TasklistExtension`. This extension relies on the built-in [Goldmark tasklist extension](https://github.com/yuin/goldmark#built-in-extensions).
+Include the GoldMark extension with `extensions.TasklistExtension`. This extension relies on the built-in [GoldMark tasklist extension](https://github.com/yuin/goldmark#built-in-extensions).
 
 ### Markdown Syntax
 
-Standard tasklist markdown syntax applies. With the class applied, further styling can be applied specifically to tasklist items while leaving standard list items unaffected e.g. `li.task`.
+Standard tasklist Markdown syntax applies. With the class applied, further styling can be applied specifically to tasklist items while leaving standard list items unaffected e.g. `li.task`.
 
 Example:
 

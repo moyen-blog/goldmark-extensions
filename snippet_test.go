@@ -24,7 +24,7 @@ And continued here.`
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	s, err := Snippet(context)
 	if err != nil {
@@ -45,7 +45,7 @@ func TestEmptySnippet(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	s, err := Snippet(context)
 	if err != nil {
@@ -79,7 +79,7 @@ continued.
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	s, err := Snippet(context)
 	if err != nil {
@@ -101,7 +101,7 @@ Paragraph text here.`
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	s, err := Snippet(context)
 	if err != nil {
@@ -123,7 +123,7 @@ func TestSnippetError(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	if _, err := Snippet(context); err == nil {
 		t.Error("Should throw because of missing extension")
@@ -136,7 +136,7 @@ func TestSnippetInvalidString(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownSnippet.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	context.Set(contextKeySnippet, 0) // Not the expected string
 	if _, err := Snippet(context); err == nil {

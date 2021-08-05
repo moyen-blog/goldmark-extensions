@@ -19,7 +19,7 @@ func TestUnorderedTasklist(t *testing.T) {
 
 	var buf bytes.Buffer
 	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	expected := `<ul>
 <li class="task"><input disabled="" type="checkbox"> Unchecked</li>
@@ -37,7 +37,7 @@ func TestOrderedTasklist(t *testing.T) {
 
 	var buf bytes.Buffer
 	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	expected := `<ol>
 <li class="task"><input disabled="" type="checkbox"> Unchecked</li>
@@ -56,7 +56,7 @@ func TestStandardList(t *testing.T) {
 
 	var buf bytes.Buffer
 	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	expected := `<ul>
 <li>One</li>
@@ -76,7 +76,7 @@ func TestMissingListItem(t *testing.T) {
 
 	var buf bytes.Buffer
 	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	expected := `<ul>
 <li>One</li>
@@ -97,7 +97,7 @@ func TestEmbeddedTaskList(t *testing.T) {
 
 	var buf bytes.Buffer
 	if err := markdownTasklist.Convert([]byte(source), &buf); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	expected := `<ol>
 <li>One

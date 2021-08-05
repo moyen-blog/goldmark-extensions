@@ -93,5 +93,5 @@ func (e *metadataExtension) Extend(m goldmark.Markdown) {
 	)
 }
 
-// MetadataExtension is a Goldmark extension
+// MetadataExtension is a GoldMark extension
 var MetadataExtension = &metadataExtension{}

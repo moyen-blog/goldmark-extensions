@@ -41,7 +41,7 @@ func (e *tasklistExtension) Extend(m goldmark.Markdown) {
 	))
 }
 
-// TasklistExtension is a Goldmark extension thinly wrapping the tasklist extension
+// TasklistExtension is a GoldMark extension thinly wrapping the tasklist extension
 // It adds "task" as a class to tasklist items
 // See https://github.com/yuin/goldmark/blob/master/extension/tasklist.go
 var TasklistExtension = &tasklistExtension{}

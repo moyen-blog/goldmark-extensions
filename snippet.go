@@ -12,7 +12,7 @@ import (
 
 var contextKeySnippet = parser.NewContextKey()
 
-// Snippet returns the snippet made up of text from the underlying markdown document
+// Snippet returns the snippet made up of text from the underlying Markdown document
 // Only paragraph nodes are used to generate the snippet
 func Snippet(pc parser.Context) (string, error) {
 	v := pc.Get(contextKeySnippet)
@@ -66,7 +66,7 @@ func (e *snippetExtension) Extend(m goldmark.Markdown) {
 	))
 }
 
-// SnippetExtension returns a Goldmark extension
+// SnippetExtension returns a GoldMark extension
 func SnippetExtension(max int) goldmark.Extender {
 	return &snippetExtension{max}
 }

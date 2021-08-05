@@ -26,7 +26,7 @@ ignored: hi
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -55,7 +55,7 @@ func TestNoMeta(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -79,7 +79,7 @@ func TestEmptyMeta(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -104,7 +104,7 @@ title: goldmark-meta
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -130,7 +130,7 @@ func TestIndentedLine(t *testing.T) {
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -156,7 +156,7 @@ title: goldmark-meta
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct {
 		Title string
@@ -185,7 +185,7 @@ bad:
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	out := struct{}{}
 	if err := Unmarshal(context, &out); err == nil {
@@ -202,7 +202,7 @@ title: goldmark-meta
 	var buf bytes.Buffer
 	context := parser.NewContext()
 	if err := markdownMeta.Convert([]byte(source), &buf, parser.WithContext(context)); err != nil {
-		t.Error("Failed to convert markdown")
+		t.Error("Failed to convert Markdown")
 	}
 	context.Set(contextKeyMeta, 0) // Not the expected bytes.Buffer
 	out := struct {
